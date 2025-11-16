@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/Eklund2012/tri/todo"
 	"github.com/spf13/cobra"
 )
 
@@ -14,9 +15,19 @@ var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a new task to your TODO list",
 	Long:  "Add will create a new task and add it to your TODO list.",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("add called")
-	},
+	Run:   addRun,
+}
+
+func addRun(cmd *cobra.Command, args []string) {
+	items := []todo.Item{}
+	for _, x := range args {
+		items = append(items, todo.Item{Text: x})
+	}
+	//fmt.Printf("%#v\n", items)
+	err := todo.SaveItems("C:/Projects/tri/myapp/todo/items.json", items)
+	if err != nil {
+		fmt.Errorf("%v", err)
+	}
 }
 
 func init() {
