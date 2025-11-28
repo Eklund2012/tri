@@ -15,7 +15,6 @@ func SaveItems(filename string, items []Item) error {
 	if err != nil {
 		return err
 	}
-	//fmt.Println(string(b))
 
 	err = os.WriteFile(filename, b, 0644)
 	if err != nil {
