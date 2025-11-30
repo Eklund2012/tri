@@ -5,10 +5,13 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/Eklund2012/tri/todo"
 	"github.com/spf13/cobra"
 )
+
+var priority int
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
@@ -19,20 +22,28 @@ var addCmd = &cobra.Command{
 }
 
 func addRun(cmd *cobra.Command, args []string) {
-	items := []todo.Item{}
-	for _, x := range args {
-		items = append(items, todo.Item{Text: x})
+	items, err := todo.ReadItems(dataFile)
+	if err != nil {
+		log.Printf("%v", err)
 	}
 
-	err := todo.SaveItems(".tridos.json", items)
-	if err != nil {
-		err = fmt.Errorf("%v", err)
-		fmt.Println(err.Error())
+	for _, x := range args {
+		item := todo.Item{Text: x}
+		item.SetPriority(priority)
+		items = append(items, item)
+	}
+
+	er := todo.SaveItems(dataFile, items)
+	if er != nil {
+		er = fmt.Errorf("%v", er)
+		fmt.Println(er.Error())
 	}
 }
 
 func init() {
 	rootCmd.AddCommand(addCmd)
+
+	addCmd.Flags().IntVarP(&priority, "priority", "p", 2, "Priority:1,2,3")
 
 	// Here you will define your flags and configuration settings.
 
